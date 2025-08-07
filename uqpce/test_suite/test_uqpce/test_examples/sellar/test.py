@@ -3,24 +3,24 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 from uqpce.mdao import interface
-import os
+from pathlib import Path
 
-# Import all components from the corrected main.py
+# Import all components from main.py
 from uqpce.examples.sellar.main import SellarDis1, SellarDis2, SellarObj, SellarConst1, SellarConst2
-
+from uqpce.examples.sellar import main
 
 class TestSellarComponents(unittest.TestCase):
     
     def setUp(self):
         """Set up test with actual UQPCE data"""
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        input_file = os.path.join(script_dir, 'input.yaml')
-        matrix_file = os.path.join(script_dir, 'run_matrix.dat')
+        main_dir = Path(main.__file__).parent
+        input_file = str(main_dir / 'input.yaml')
+        matrix_file = str(main_dir / 'run_matrix.dat')
         
         # Load UQPCE data
         _, _, _, _, _, resp_cnt, _, _, _, run_matrix = interface.initialize(input_file, matrix_file)
         
-        self.vec_size = resp_cnt  # Should be 30
+        self.vec_size = resp_cnt 
         self.run_matrix = run_matrix
         
         # Test with first sample - corrected values from run_matrix.dat
@@ -54,7 +54,7 @@ class TestSellarComponents(unittest.TestCase):
         assert_near_equal(prob.get_val('dis1.y1'), [expected_y1], tolerance=1e-10)
         
         # Check derivatives
-        data = prob.check_partials(compact_print=True, method='cs')
+        data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(data, atol=1e-10, rtol=1e-10)
         
     def test_sellar_dis2(self):
@@ -79,7 +79,7 @@ class TestSellarComponents(unittest.TestCase):
         assert_near_equal(prob.get_val('dis2.y2'), [expected_y2], tolerance=1e-10)
         
         # Check derivatives
-        data = prob.check_partials(compact_print=True, method='cs')
+        data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(data, atol=1e-10, rtol=1e-10)
         
     def test_sellar_obj(self):
@@ -110,7 +110,7 @@ class TestSellarComponents(unittest.TestCase):
         assert_near_equal(prob.get_val('obj.obj'), [expected_obj], tolerance=1e-10)
         
         # Check derivatives
-        data = prob.check_partials(compact_print=True, method='cs')
+        data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(data, atol=1e-10, rtol=1e-10)
         
     def test_sellar_const1(self):
@@ -130,7 +130,7 @@ class TestSellarComponents(unittest.TestCase):
         assert_near_equal(prob.get_val('const1.const1'), [expected_const1], tolerance=1e-10)
         
         # Check derivatives
-        data = prob.check_partials(compact_print=True, method='cs')
+        data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(data, atol=1e-10, rtol=1e-10)
         
     def test_sellar_const2(self):
@@ -150,7 +150,7 @@ class TestSellarComponents(unittest.TestCase):
         assert_near_equal(prob.get_val('const2.const2'), [expected_const2], tolerance=1e-10)
         
         # Check derivatives
-        data = prob.check_partials(compact_print=True, method='cs')
+        data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(data, atol=1e-10, rtol=1e-10)
         
     def test_vectorized_components(self):
@@ -174,7 +174,7 @@ class TestSellarComponents(unittest.TestCase):
         self.assertTrue(np.all(np.isfinite(y1)))
         
         # Test SellarObj with vectors
-        prob2 = om.Problem()
+        prob2 = om.Problem(reports=None)
         prob2.model.add_subsystem('obj', SellarObj(vec_size=self.vec_size))
         prob2.setup()
         
@@ -212,14 +212,14 @@ class TestSellarComponents(unittest.TestCase):
         assert_near_equal(prob.get_val('dis2.y2'), [expected_y2], tolerance=1e-10)
         
         # Test with large negative y2 for SellarObj (exp(-y2) should be very large)
-        prob2 = om.Problem()
+        prob2 = om.Problem(reports=None)
         prob2.model.add_subsystem('obj', SellarObj(vec_size=1))
         prob2.setup()
         
         prob2.set_val('obj.x', 0.0)
         prob2.set_val('obj.z', [0.0, 0.0])
         prob2.set_val('obj.y1', [0.0])
-        prob2.set_val('obj.y2', [-10.0])  # exp(10) ≈ 22026
+        prob2.set_val('obj.y2', [-10.0]) 
         prob2.set_val('obj.a0', [1.0])
         prob2.set_val('obj.a1', [1.0])
         prob2.set_val('obj.a2', [1.0])

@@ -6,7 +6,7 @@ from uqpce.examples.dymos_projectile.dymos_projectile.widthCI import WidthCI
 
 class TestCost(unittest.TestCase):
     def setUp(self):
-        prob = om.Problem()
+        prob = om.Problem(reports=None)
         prob.model.add_subsystem(
             'dist', WidthCI(), promotes_inputs=['*'], promotes_outputs=['*']
         )

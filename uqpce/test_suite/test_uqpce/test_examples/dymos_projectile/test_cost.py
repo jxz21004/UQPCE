@@ -8,7 +8,7 @@ class TestCost(unittest.TestCase):
     def setUp(self):
         # Number of sample points
         resp_cnt = 12
-        prob = om.Problem()
+        prob = om.Problem(reports=None)
         prob.model.add_subsystem(
             'cost', Cost(num_samples=resp_cnt), promotes_inputs=['*'], promotes_outputs=['*']
         )
