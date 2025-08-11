@@ -16,7 +16,7 @@ class TestCost(unittest.TestCase):
         # Area calculated using mass = 12
         A = 0.014289
 
-        prob = om.Problem()
+        prob = om.Problem(reports=None)
         vals = {
             'c_d': cd_0,
             'A': A,

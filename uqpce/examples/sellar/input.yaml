@@ -1,0 +1,31 @@
+Variable 0:
+  name: a0
+  distribution: normal
+  mean: 0.3
+  stdev: 0.035
+  type: aleatory
+Variable 1:
+  name: a1
+  distribution: uniform
+  interval_low: 0.8
+  interval_high: 1.2
+  type: aleatory
+Variable 2:
+  name: a2
+  distribution: normal
+  mean: 0.8
+  stdev: 0.2
+  type: aleatory
+Variable 3:
+  name: a3
+  distribution: normal
+  mean: 5
+  stdev: 1.5
+  type: aleatory
+Settings:
+    order: 2
+    backend: Agg
+    conv_threshold_percent: 0.000005
+    aleat_samp_size: 25000
+    track_convergence_off: True
+    significance: 0.05

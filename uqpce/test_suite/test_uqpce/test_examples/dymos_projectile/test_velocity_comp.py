@@ -9,7 +9,7 @@ class TestCost(unittest.TestCase):
     def setUp(self):
         # Number of sample points
         resp_cnt = 12
-        prob = om.Problem()
+        prob = om.Problem(reports=None)
         prob.model.add_subsystem(
             'vcomp', V_Comp(num_samples=resp_cnt), promotes_inputs=['v_in', 'theta'], promotes_outputs=['vx', 'vy']
         )

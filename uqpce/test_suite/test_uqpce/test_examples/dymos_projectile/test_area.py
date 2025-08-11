@@ -6,7 +6,7 @@ from uqpce.examples.dymos_projectile.dymos_projectile.area import Area
 
 class TestCost(unittest.TestCase):
     def setUp(self):
-        prob = om.Problem()
+        prob = om.Problem(reports=None)
         prob.model.add_subsystem(
             'area', Area(), promotes_inputs=['*'], promotes_outputs=['*']
         )
