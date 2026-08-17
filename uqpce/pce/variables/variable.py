@@ -79,7 +79,9 @@ class Variable():
             the number of points needed to be generated
         """
         from scipy.stats.qmc import LatinHypercube
-        sampler = LatinHypercube(d=1)
+        # seed from the global numpy stream so np.random.seed() makes
+        # resampling reproducible; an unseeded engine draws OS entropy
+        sampler = LatinHypercube(d=1, seed=np.random.randint(2**31))
         samps = sampler.random(n=count)
 
         vals = self.cdf_sample(samps)
